@@ -1,0 +1,53 @@
+---
+title: "hw1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(sf)
+library(tidyverse) #read 
+library(here)
+```
+
+```{r load data}
+#shp
+NZ_territory <- st_read(here::here("hw1_data",
+                                   "statsnzterritorial-authority-2018-generalised-SHP",
+                                   "territorial-authority-2018-generalised.shp"))
+NZ_territory
+
+#cvs
+NZ_employ <- read_csv(here::here("hw1_data",
+                                 "employment_territory.csv"), 
+                                 skip=1)
+NZ_employ
+```
+
+
+```{r plot}
+NZ_territory %>%
+  st_geometry() %>%
+  plot()
+```
+
+```{r join data}
+NZ_territory_employ <- NZ_territory %>%
+  merge(.,
+        NZ_employ,
+        by.x="TA2018_V1_", #shp的code
+        by.y="Area_Code") #csv的code
+NZ_territory_employ
+```
+
+
+```{r plot}
+library(tmap)
+tmap_mode("plot")
+NZ_territory_employ %>%
+  qtm(., fill = "Employed Full time") #quick thematic map
+```
+
